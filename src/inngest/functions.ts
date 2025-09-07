@@ -1,21 +1,27 @@
 import { z } from "zod";
 import { inngest } from "./client";
-import { openai, createAgent, createTool, createNetwork } from "@inngest/agent-kit";
+import { openai, createAgent, createTool, createNetwork, type Tool } from "@inngest/agent-kit";
 import { Sandbox } from "@e2b/code-interpreter";
 import { getSandbox, lastAssistantTextMessageContent } from "./utils";
 import { PROMPT } from "@/prompt";
+import prisma from "@/lib/db";
 
-export const helloWorld = inngest.createFunction(
-  { id: "hello-world" },
-  { event: "test/hello.world" },
+interface AgentState {
+  summary: string;
+  files: {[path: string]: string};
+}
+
+export const codeAgentFunction = inngest.createFunction(
+  { id: "code-agent" },
+  { event: "code-agent/run" },
 
   async ({ event,step }) => {
     const sandboxId = await step.run("get-sandbox-id", async () => {
-      const sandbox = await Sandbox.create("n71s3dmu45nc20appcp5");
+      const sandbox = await Sandbox.create("8ngtcyz3faxwin0eaksr");
       return sandbox.sandboxId;
     });
 
-    const codeAgent = createAgent({
+    const codeAgent = createAgent<AgentState>({
       name: "code-agent",
       description: "An expert coding agent",
       system: PROMPT,
@@ -64,7 +70,7 @@ export const helloWorld = inngest.createFunction(
               })
             ),
           }),
-          handler: async ({ files }, { step, network }) => {
+          handler: async ({ files }, { step, network } : Tool.Options<AgentState>) => {
             const newFiles = await step?.run("createOrUpdateFiles", async () => {
               try {
                 const updatedFiles = network.state.data.files || {};
@@ -77,13 +83,16 @@ export const helloWorld = inngest.createFunction(
 
                 return updatedFiles;
               } catch (error) {
+                console.error(`Failed to create or update files: ${error}`);
                 return { error: `Failed to create or update files: ${error}` };
               }
             });
 
-            if (typeof newFiles === "object") {
+            if (newFiles && typeof newFiles === "object" && !('error' in newFiles)) {
               network.state.data.files = newFiles;
             }
+            
+            return newFiles;
           }
         }),
         createTool({
@@ -117,8 +126,12 @@ export const helloWorld = inngest.createFunction(
           const lastAssistantTextMessageText = lastAssistantTextMessageContent(result);
 
           if(lastAssistantTextMessageText && network){
-            if(lastAssistantTextMessageText.includes("<task_summary")){
-              network.state.data.lastSummary = lastAssistantTextMessageText;
+            if(lastAssistantTextMessageText.includes("<task_summary>")){
+              // Extract summary content from between the tags
+              const summaryMatch = lastAssistantTextMessageText.match(/<task_summary>(.*?)<\/task_summary>/s);
+              if(summaryMatch){
+                network.state.data.summary = summaryMatch[1].trim();
+              }
             }
           } 
           return result;
@@ -126,26 +139,68 @@ export const helloWorld = inngest.createFunction(
       }
     });
 
-    const network = createNetwork({
-      name: "code-network",
+    const network = createNetwork<AgentState>({
+      name: "code-agent-network",
       agents: [codeAgent],
       maxIter: 15,
+      state: {
+        data: {
+          summary: "",
+          files: {}
+        }
+      },
       router: async ({ network }) => {
-        const summary = network.state.data.lastSummary;
+        const summary = network.state.data.summary;
         if(summary){
-          return
+          return null; // Explicitly return null to stop execution
         }
         return codeAgent;
       }
     })
 
 
-    const result = await network.run(event.data.value);
+    const result = await network.run(event.data.value, {
+      maxIter: 15,
+      onNetworkEnd: ({ network }) => {
+        console.log("Network ended with state:", network.state.data);
+      }
+    });
+
+    const isError = !result.state.data.summary || result.state.data.summary.trim() === "";
 
     const sandboxUrl = await step.run("execute-in-sandbox", async () => {
       const sandbox = await getSandbox(sandboxId);
       const host = sandbox.getHost(3000);
       return `https://${host}`;
+    });
+
+    await step.run("save-result" , async () => {
+
+      if(isError){
+        return await prisma.message.create({
+          data: {
+            content: "I'm sorry, I was unable to complete your request.",
+            role: "ASSISTANT",
+            type: "ERROR",
+          }
+        });
+      }
+
+      return await prisma.message.create({
+        data: {
+          content: result.state.data.summary,
+          role: "ASSISTANT",
+          type: "RESULT",
+          fragment: {
+            create: {
+              sandboxUrl: sandboxUrl,
+              title: "Fragment",
+              files: result.state.data.files,
+              summary: result.state.data.summary
+            }
+          }
+        }
+      });
     })
 
     return { 
