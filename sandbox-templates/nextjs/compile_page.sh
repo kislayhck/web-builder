@@ -1,20 +1,33 @@
 #!/bin/bash
+set -euo pipefail
 
 # This script runs during building the sandbox template
-# and makes sure the Next.js app is (1) running and (2) the `/` page is compiled
-function ping_server() {
-	counter=0
-	response=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3000")
-	while [[ ${response} -ne 200 ]]; do
-	  let counter++
-	  if  (( counter % 20 == 0 )); then
-        echo "Waiting for server to start..."
-        sleep 0.1
-      fi
+# and makes sure the Next.js app is (1) running and (2) `/` is compiled.
 
-	  response=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3000")
-	done
+ping_server() {
+  local response
+  local counter=0
+
+  while true; do
+    response=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3000" || true)
+    if [[ "${response}" == "200" ]]; then
+      echo "Server responded with 200. Build-ready."
+      break
+    fi
+
+    ((counter++))
+    if (( counter % 10 == 0 )); then
+      echo "Waiting for server to start... (last code: ${response})"
+    fi
+    sleep 0.2
+  done
 }
 
-ping_server &
-cd /home/user && npx next dev --turbopack
+# Start the dev server in the background (bind to all interfaces)
+( cd /home/user && npx next dev --turbopack --hostname 0.0.0.0 ) &
+
+# Wait until it is ready
+ping_server
+
+# keep the process alive if your platform expects the start command to stay running
+wait
