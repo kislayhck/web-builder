@@ -11,21 +11,21 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const router = useRouter();
-  const trpc = useTRPC();
+
+  const router = useRouter(); 
   const [value, setValue] = useState("");
+  const trpc = useTRPC();
+  
 
-  const createProject = useMutation(
-    trpc.projects.create.mutationOptions({
-      onError: (err) => {
-        toast.error(err.message || "Something went wrong");
-      },
+  const createProject = useMutation(trpc.projects.create.mutationOptions({
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: (data) => {
+      router.push(`/projects/${data.id}`);
+    }
+  }));
 
-      onSuccess: (data) => {
-        router.push(`/project/${data.id}`);
-      }
-    })
-  )
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[rgba(10,13,24,0.95)] via-[rgba(12,16,28,0.9)] to-black text-foreground antialiased">
@@ -71,10 +71,8 @@ export default function Home() {
                 />
 
                 <Button
-                  onClick={() =>
-                    createProject.mutate({ value: value })
-                  }
-                  disabled={createProject.isPending}
+                  disabled={createProject.isPending} 
+                  onClick={() => createProject.mutate({ value: value })}
                   className="bg-[var(--accent)] text-black px-4 py-3 rounded-xl"
                   aria-label="Send"
                 >
