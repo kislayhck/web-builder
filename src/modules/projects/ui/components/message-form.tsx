@@ -61,47 +61,59 @@ const MessageForm: React.FC<Props> = ({ projectId }) => {
         <Form {...form}>
             <form 
                 onSubmit={form.handleSubmit(onSubmit)}
-                className={cn(
-                    "flex items-center space-x-2 mt-4",
-                    isFocused && "border-blue-500",
-                    showUsage && "border-green-500"
-                )}
+                className="space-y-2"
             >
-                <FormField
-                    control={form.control}
-                    name="value"
-                    render={({ field }) => (
-                        <TextareaAutosize
-                            {...field}
-                            disabled={isPending}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => setIsFocused(false)}
-                            placeholder="Type your message..."
-                            minRows={2}
-                            maxRows={4}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                                    e.preventDefault();
-                                    form.handleSubmit(onSubmit)(e);
-                                }
-                            }}
-                        />
-                    )}
-                />
-                <div className="flex gap-x-2 items-end">
-                    <div className="text-[10px]">
-                        <kbd>
-                            <span>⌘ + Enter</span>
-                        </kbd>
-                    </div>
-                    <Button 
-                        disabled={isButtonDisabled}
-                        className={cn(
-                            "p-2 rounded-md",
+                <div className={cn(
+                    "flex items-end space-x-3 p-3 border rounded-lg transition-colors",
+                    isFocused ? "border-blue-500 bg-blue-50/30" : "border-gray-200 bg-white",
+                    showUsage && "border-green-500"
+                )}>
+                    <FormField
+                        control={form.control}
+                        name="value"
+                        render={({ field }) => (
+                            <TextareaAutosize
+                                {...field}
+                                disabled={isPending}
+                                onFocus={() => setIsFocused(true)}
+                                onBlur={() => setIsFocused(false)}
+                                placeholder="Type your message..."
+                                className="flex-1 resize-none border-none outline-none bg-transparent text-gray-900 text-sm placeholder:text-gray-400"
+                                minRows={1}
+                                maxRows={4}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                                        e.preventDefault();
+                                        form.handleSubmit(onSubmit)(e);
+                                    }
+                                }}
+                            />
                         )}
-                    >
-                        {isPending ? <Loader2Icon className="animate-spin size-4"/> : <ArrowUpIcon className="size-4"/>}
-                    </Button>
+                    />
+                    <div className="flex items-center gap-2">
+                        <div className="text-[10px] text-gray-400 hidden sm:block">
+                            <kbd className="px-1 py-0.5 text-xs bg-gray-100 rounded">
+                                ⌘ + Enter
+                            </kbd>
+                        </div>
+                        <Button 
+                            type="submit"
+                            disabled={isButtonDisabled}
+                            size="sm"
+                            className={cn(
+                                "h-8 w-8 p-0 rounded-full transition-all",
+                                isButtonDisabled 
+                                    ? "bg-gray-300 hover:bg-gray-300" 
+                                    : "bg-blue-500 hover:bg-blue-600"
+                            )}
+                        >
+                            {isPending ? (
+                                <Loader2Icon className="animate-spin size-4" />
+                            ) : (
+                                <ArrowUpIcon className="size-4" />
+                            )}
+                        </Button>
+                    </div>
                 </div>
             </form>
         </Form>

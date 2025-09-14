@@ -35,11 +35,19 @@ export const MessageContainer = ({ projectId, activeFragment, setActiveFragment 
   
     const lastMessage = messages[messages.length - 1];
     const isLastMessageUser = lastMessage?.role === 'USER';
+    
+    // Check if we have a user message followed by a pending AI response
+    const isWaitingForAIResponse = isLastMessageUser && messages.length > 0;
 
     return (
-        <div className="p-4">
-            <h2 className="text-lg font-semibold">Messages</h2>
-            <div className="mt-2">
+        <div className="h-full flex flex-col">
+            {/* Header */}
+            <div className="p-4 border-b bg-white">
+                <h2 className="text-lg font-semibold text-gray-800">Chat</h2>
+            </div>
+            
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages?.map((message) => (
                     <MessageCard
                         key={message.id}
@@ -52,9 +60,17 @@ export const MessageContainer = ({ projectId, activeFragment, setActiveFragment 
                         type={message.type}
                     />
                 ))}
-                {isLastMessageUser && <ShimmerMessages />}
+                {isWaitingForAIResponse && (
+                    <div className="flex justify-start">
+                        <ShimmerMessages />
+                    </div>
+                )}
             </div>
-            <MessageForm projectId={projectId} />
+            
+            {/* Message Form */}
+            <div className="border-t bg-white p-4">
+                <MessageForm projectId={projectId} />
+            </div>
         </div>
     );
 }
