@@ -49,7 +49,6 @@
   --foreground: oklch(0.145 0 0);
   /* Brand and accent colors (replace with UXccelerate values) */
   --brand: #d6ff7a; /* example - replace with UXccelerate primary */
-  --accent: #ff9f45; /* example accent for buttons */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -86,7 +85,6 @@
   --foreground: oklch(0.985 0 0);
   /* Brand & accent in dark (can be same as :root or adjusted) */
   --brand: #d6ff7a;
-  --accent: #ff9f45;
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);

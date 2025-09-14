@@ -28,17 +28,17 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[rgba(10,13,24,0.95)] via-[rgba(12,16,28,0.9)] to-black text-foreground antialiased">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background/90 to-background/80 text-foreground antialiased">
       <header className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-4">
           <img src={"https://uxccelerate.ai/logo.png"} width={140} height={40} alt="Logo" />
         </Link>
 
-        <nav className="hidden md:flex gap-6 text-slate-300">
-          <Link href="#" className="hover:text-white">Product</Link>
-          <Link href="#" className="hover:text-white">Resources</Link>
-          <Link href="#" className="hover:text-white">Pricing</Link>
-          <Link href="#" className="hover:text-white">Enterprise</Link>
+        <nav className="hidden md:flex gap-6 text-muted-foreground">
+          <Link href="#" className="hover:text-foreground">Product</Link>
+          <Link href="#" className="hover:text-foreground">Resources</Link>
+          <Link href="#" className="hover:text-foreground">Pricing</Link>
+          <Link href="#" className="hover:text-foreground">Enterprise</Link>
         </nav>
 
         <div className="hidden md:block">
@@ -53,7 +53,7 @@ export default function Home() {
             <br />
             Right now.
           </h1>
-          <p className="mt-6 text-slate-300">
+          <p className="mt-6 text-muted-foreground">
             Build fully-functional apps in minutes with just your words.
             No coding necessary.
           </p>
@@ -67,13 +67,13 @@ export default function Home() {
                   value={value}
                   onChange={(e) => setValue(e.target.value)}
                   placeholder="What do you want to build?"
-                  className="flex-1 bg-transparent border-none text-foreground placeholder:text-slate-400 focus:ring-0"
+                  className="flex-1 bg-transparent border-none text-foreground placeholder:text-muted-foreground focus:ring-0"
                 />
 
                 <Button
                   disabled={createProject.isPending} 
                   onClick={() => createProject.mutate({ value: value })}
-                  className="bg-[var(--accent)] text-black px-4 py-3 rounded-xl"
+                  className="bg-primary text-primary-foreground px-4 py-3 rounded-xl hover:bg-primary/90"
                   aria-label="Send"
                 >
                   ➜
@@ -81,7 +81,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-6 text-slate-400 text-sm">
+            <div className="mt-6 text-muted-foreground text-sm">
               Not sure where to start? Try one of these:
               <div className="flex flex-wrap gap-3 mt-3">
                 {[
@@ -94,7 +94,7 @@ export default function Home() {
                   <button
                     key={t}
                     onClick={() => setValue(t)}
-                    className="px-4 py-2 rounded-full border border-slate-700 text-slate-200 hover:bg-slate-700/30"
+                    className="px-4 py-2 rounded-full border border-border text-foreground hover:bg-muted/50"
                   >
                     {t}
                   </button>

@@ -29,7 +29,7 @@ export const ProjectView = ({ projectId }: Props) => {
                         />
                     </Suspense>
                 </ResizablePanel>
-                <ResizableHandle withHandle className="bg-gray-200 hover:bg-gray-300" />
+                <ResizableHandle withHandle className="bg-border hover:bg-muted" />
                 <ResizablePanel
                     defaultSize={65}
                     minSize={40}
@@ -39,7 +39,7 @@ export const ProjectView = ({ projectId }: Props) => {
                         {activeFragment ? (
                             <FragmentWeb data={activeFragment} />
                         ) : (
-                            <div className="flex items-center justify-center h-full text-gray-500 bg-gray-50">
+                            <div className="flex items-center justify-center h-full text-muted-foreground bg-background">
                                 <div className="text-center">
                                     <div className="text-lg font-medium mb-2">No Preview Selected</div>
                                     <div className="text-sm">Click on a preview button from the messages to view the generated content</div>

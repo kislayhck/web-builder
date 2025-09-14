@@ -13,12 +13,12 @@ export function FragmentWeb({ data }: Props) {
     const [isLoading, setIsLoading] = useState(true);
 
     return (
-        <div className="h-full flex flex-col bg-white">
+        <div className="h-full flex flex-col bg-background">
             {/* Header */}
-            <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
+            <div className="p-4 border-b border-border bg-card flex justify-between items-center">
                 <div className="flex items-center space-x-2">
-                    <h3 className="text-sm font-medium text-gray-800">{data.title}</h3>
-                    <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">Preview</span>
+                    <h3 className="text-sm font-medium text-card-foreground">{data.title}</h3>
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Preview</span>
                 </div>
                 <div className="flex items-center space-x-2">
                     <Button
@@ -48,12 +48,12 @@ export function FragmentWeb({ data }: Props) {
             </div>
             
             {/* Iframe Container */}
-            <div className="flex-1 relative bg-white">
+            <div className="flex-1 relative bg-background">
                 {isLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+                    <div className="absolute inset-0 flex items-center justify-center bg-background">
                         <div className="text-center">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-                            <p className="text-sm text-gray-500">Loading preview...</p>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                            <p className="text-sm text-muted-foreground">Loading preview...</p>
                         </div>
                     </div>
                 )}

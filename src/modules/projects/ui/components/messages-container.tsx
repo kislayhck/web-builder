@@ -40,14 +40,14 @@ export const MessageContainer = ({ projectId, activeFragment, setActiveFragment 
     const isWaitingForAIResponse = isLastMessageUser && messages.length > 0;
 
     return (
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col bg-background">
             {/* Header */}
-            <div className="p-4 border-b bg-white">
-                <h2 className="text-lg font-semibold text-gray-800">Chat</h2>
+            <div className="p-4 border-b border-border bg-card">
+                <h2 className="text-lg font-semibold text-card-foreground">Chat</h2>
             </div>
             
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-background">
                 {messages?.map((message) => (
                     <MessageCard
                         key={message.id}
@@ -68,7 +68,7 @@ export const MessageContainer = ({ projectId, activeFragment, setActiveFragment 
             </div>
             
             {/* Message Form */}
-            <div className="border-t bg-white p-4">
+            <div className="border-t border-border bg-card p-4">
                 <MessageForm projectId={projectId} />
             </div>
         </div>

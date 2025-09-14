@@ -65,7 +65,7 @@ const MessageForm: React.FC<Props> = ({ projectId }) => {
             >
                 <div className={cn(
                     "flex items-end space-x-3 p-3 border rounded-lg transition-colors",
-                    isFocused ? "border-blue-500 bg-blue-50/30" : "border-gray-200 bg-white",
+                    isFocused ? "border-primary bg-primary/5" : "border-border bg-background",
                     showUsage && "border-green-500"
                 )}>
                     <FormField
@@ -78,7 +78,7 @@ const MessageForm: React.FC<Props> = ({ projectId }) => {
                                 onFocus={() => setIsFocused(true)}
                                 onBlur={() => setIsFocused(false)}
                                 placeholder="Type your message..."
-                                className="flex-1 resize-none border-none outline-none bg-transparent text-gray-900 text-sm placeholder:text-gray-400"
+                                className="flex-1 resize-none border-none outline-none bg-transparent text-foreground text-sm placeholder:text-muted-foreground"
                                 minRows={1}
                                 maxRows={4}
                                 onKeyDown={(e) => {
@@ -91,8 +91,8 @@ const MessageForm: React.FC<Props> = ({ projectId }) => {
                         )}
                     />
                     <div className="flex items-center gap-2">
-                        <div className="text-[10px] text-gray-400 hidden sm:block">
-                            <kbd className="px-1 py-0.5 text-xs bg-gray-100 rounded">
+                        <div className="text-[10px] text-muted-foreground hidden sm:block">
+                            <kbd className="px-1 py-0.5 text-xs bg-muted rounded">
                                 ⌘ + Enter
                             </kbd>
                         </div>
@@ -103,8 +103,8 @@ const MessageForm: React.FC<Props> = ({ projectId }) => {
                             className={cn(
                                 "h-8 w-8 p-0 rounded-full transition-all",
                                 isButtonDisabled 
-                                    ? "bg-gray-300 hover:bg-gray-300" 
-                                    : "bg-blue-500 hover:bg-blue-600"
+                                    ? "bg-muted hover:bg-muted" 
+                                    : "bg-primary hover:bg-primary/90"
                             )}
                         >
                             {isPending ? (

@@ -12,7 +12,7 @@ interface UserMessageProps {
 const UserMessage = ({ content }: UserMessageProps) => {
     return (
         <div className="flex justify-end">
-            <div className="bg-blue-500 text-white p-3 rounded-lg rounded-br-sm max-w-[80%] shadow-sm">
+            <div className="bg-primary text-primary-foreground p-3 rounded-lg rounded-br-sm max-w-[80%] shadow-sm">
                 <p className="text-sm">{content}</p>
             </div>
         </div>
@@ -31,20 +31,20 @@ const FragmentCard = ({ fragment, isActiveFragment, onFragmentClick }: FragmentC
             className={cn(
                 "w-full mt-2 p-3 rounded-lg border text-left transition-all hover:shadow-md",
                 isActiveFragment 
-                    ? "border-blue-500 bg-blue-50 shadow-sm" 
-                    : "border-gray-200 bg-white hover:border-gray-300",
+                    ? "border-primary bg-primary/10 shadow-sm" 
+                    : "border-border bg-card hover:border-primary/50",
             )} 
             onClick={() => onFragmentClick(fragment)}
         >
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                    <Code2Icon className="size-4 text-blue-500" />
+                    <Code2Icon className="size-4 text-primary" />
                     <div>
-                        <h4 className="font-medium text-sm text-gray-800">{fragment.title}</h4>
-                        <p className="text-xs text-gray-500">Click to preview</p>
+                        <h4 className="font-medium text-sm text-card-foreground">{fragment.title}</h4>
+                        <p className="text-xs text-muted-foreground">Click to preview</p>
                     </div>
                 </div>
-                <ChevronRightIcon className="size-4 text-gray-400" />
+                <ChevronRightIcon className="size-4 text-muted-foreground" />
             </div>
         </button>
     );
@@ -66,19 +66,19 @@ const AssistantMessage = ({ content, fragment, createdAt, isActiveFragment, onFr
             <div className={cn(
                 "max-w-[80%] rounded-lg rounded-bl-sm shadow-sm",
                 type === "ERROR" 
-                    ? "bg-red-50 border border-red-200" 
-                    : "bg-gray-100 border border-gray-200"
+                    ? "bg-destructive/10 border border-destructive/50" 
+                    : "bg-muted border border-border"
             )}>
                 <div className="p-3">
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">AI</span>
+                        <div className="w-6 h-6 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
+                            <span className="text-primary-foreground text-xs font-bold">AI</span>
                         </div>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-muted-foreground">
                             {format(createdAt, "HH:mm")}
                         </span>
                     </div>
-                    <p className="text-sm text-gray-800 whitespace-pre-wrap">{content}</p>
+                    <p className="text-sm text-foreground whitespace-pre-wrap">{content}</p>
                     {fragment && type === "RESULT" && (
                         <FragmentCard 
                             fragment={fragment} 
