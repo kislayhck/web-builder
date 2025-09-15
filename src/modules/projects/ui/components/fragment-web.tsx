@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { ExternalLinkIcon, RefreshCcwIcon } from "lucide-react";
+import { ExternalLinkIcon, RefreshCcwIcon, CodeIcon, GlobeIcon } from "lucide-react";
 
 import { Fragment } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FragmentCode } from "./fragment-code";
 
 
 interface Props {
@@ -11,6 +13,7 @@ interface Props {
 
 export function FragmentWeb({ data }: Props) {
     const [isLoading, setIsLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState("web");
 
     return (
         <div className="h-full flex flex-col bg-background">
@@ -21,51 +24,84 @@ export function FragmentWeb({ data }: Props) {
                     <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Preview</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                            const iframe = document.querySelector('iframe');
-                            if (iframe) {
-                                iframe.src = iframe.src; // Refresh iframe
-                            }
-                        }}
-                        className="h-8 px-3"
-                    >
-                        <RefreshCcwIcon className="size-3 mr-1" />
-                        Refresh
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(data.sandboxUrl, '_blank')}
-                        className="h-8 px-3"
-                    >
-                        <ExternalLinkIcon className="size-3 mr-1" />
-                        Open
-                    </Button>
+                    {activeTab === "web" && (
+                        <>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    const iframe = document.querySelector('iframe');
+                                    if (iframe) {
+                                        iframe.src = iframe.src; // Refresh iframe
+                                    }
+                                }}
+                                className="h-8 px-3"
+                            >
+                                <RefreshCcwIcon className="size-3 mr-1" />
+                                Refresh
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => window.open(data.sandboxUrl, '_blank')}
+                                className="h-8 px-3"
+                            >
+                                <ExternalLinkIcon className="size-3 mr-1" />
+                                Open
+                            </Button>
+                        </>
+                    )}
                 </div>
             </div>
             
-            {/* Iframe Container */}
-            <div className="flex-1 relative bg-background">
-                {isLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-background">
-                        <div className="text-center">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-                            <p className="text-sm text-muted-foreground">Loading preview...</p>
-                        </div>
+            {/* Tab Navigation and Content */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+                {/* Tab Navigation */}
+                <div className="border-b border-border bg-card">
+                    <TabsList className="h-10 w-full justify-start rounded-none bg-transparent border-0">
+                        <TabsTrigger 
+                            value="web" 
+                            className="flex items-center gap-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent rounded-none"
+                        >
+                            <GlobeIcon className="size-4" />
+                            Web Preview
+                        </TabsTrigger>
+                        <TabsTrigger 
+                            value="code" 
+                            className="flex items-center gap-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent rounded-none"
+                        >
+                            <CodeIcon className="size-4" />
+                            Code View
+                        </TabsTrigger>
+                    </TabsList>
+                </div>
+                
+                {/* Content */}
+                <TabsContent value="web" className="flex-1 mt-0 border-0 p-0">
+                    <div className="h-full relative bg-background">
+                        {isLoading && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-background">
+                                <div className="text-center">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                                    <p className="text-sm text-muted-foreground">Loading preview...</p>
+                                </div>
+                            </div>
+                        )}
+                        <iframe 
+                            loading="lazy"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
+                            src={data.sandboxUrl}
+                            className="w-full h-full border-0"
+                            onLoad={() => setIsLoading(false)}
+                            onError={() => setIsLoading(false)}
+                        />
                     </div>
-                )}
-                <iframe 
-                    loading="lazy"
-                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
-                    src={data.sandboxUrl}
-                    className="w-full h-full border-0"
-                    onLoad={() => setIsLoading(false)}
-                    onError={() => setIsLoading(false)}
-                />
-            </div>
+                </TabsContent>
+                
+                <TabsContent value="code" className="flex-1 mt-0 border-0 p-0 h-full">
+                    <FragmentCode data={data} />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }
