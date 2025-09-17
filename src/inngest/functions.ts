@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { inngest } from "./client";
-import { openai, createAgent, createTool, createNetwork, type Tool } from "@inngest/agent-kit";
+import { openai, createAgent, createTool, createNetwork, type Tool, type Message,createState } from "@inngest/agent-kit";
 import { Sandbox } from "@e2b/code-interpreter";
 import { getSandbox, lastAssistantTextMessageContent } from "./utils";
 import { PROMPT } from "@/prompt";
@@ -20,6 +20,35 @@ export const codeAgentFunction = inngest.createFunction(
       const sandbox = await Sandbox.create("8ngtcyz3faxwin0eaksr");
       return sandbox.sandboxId;
     });
+
+    const previousMessages = await step.run("get-previous-messages", async () => {
+        const formattedMessages: Message[] = [];
+
+        const messages = await prisma.message.findMany({
+          where: { projectId: event.data.projectId },
+          orderBy: { createdAt: 'desc' },
+        })
+
+        for (const message of messages) {
+          formattedMessages.push({
+            type: "text",
+            role: message.role === "ASSISTANT" ? "assistant" : "user",
+            content: message.content,
+          });
+        }
+
+        return formattedMessages;
+    });
+
+    const state = createState<AgentState>(
+      {
+        summary: "",
+        files: {}
+      },
+      {
+        messages: previousMessages
+      }
+  );
 
     const codeAgent = createAgent<AgentState>({
       name: "code-agent",
@@ -143,6 +172,7 @@ export const codeAgentFunction = inngest.createFunction(
       name: "code-agent-network",
       agents: [codeAgent],
       maxIter: 15,
+      defaultState: state,
       state: {
         data: {
           summary: "",
@@ -161,6 +191,7 @@ export const codeAgentFunction = inngest.createFunction(
 
     const result = await network.run(event.data.value, {
       maxIter: 15,
+      state: state,
       onNetworkEnd: ({ network }) => {
         console.log("Network ended with state:", network.state.data);
       }
@@ -179,6 +210,7 @@ export const codeAgentFunction = inngest.createFunction(
       if(isError){
         return await prisma.message.create({
           data: {
+            projectId: event.data.projectId,
             content: "I'm sorry, I was unable to complete your request.",
             role: "ASSISTANT",
             type: "ERROR",
@@ -188,6 +220,7 @@ export const codeAgentFunction = inngest.createFunction(
 
       return await prisma.message.create({
         data: {
+          projectId: event.data.projectId,
           content: result.state.data.summary,
           role: "ASSISTANT",
           type: "RESULT",
