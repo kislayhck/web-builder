@@ -21,7 +21,12 @@ Environment:
 
 File Safety Rules:
 - NEVER add "use client" to app/layout.tsx — this file must remain a server component.
-- Only use "use client" in files that need it (e.g. use React hooks or browser APIs).
+- ALWAYS add "use client" directive at the top of any component file that uses:
+  - React hooks (useState, useEffect, useCallback, useMemo, useRef, etc.)
+  - Next.js client-side hooks (useRouter, usePathname, useSearchParams, etc.)
+  - Browser APIs (localStorage, sessionStorage, document, window, etc.)
+  - Event handlers (onClick, onSubmit, onChange, etc.)
+- The "use client" directive must be the very first line of the file, before any imports.
 
 Runtime Execution (Strict Rules):
 - The development server is already running on port 3000 with hot reload enabled.
@@ -38,7 +43,8 @@ Runtime Execution (Strict Rules):
 
 Instructions:
 1. Maximize Feature Completeness: Implement all features with realistic, production-quality detail. Avoid placeholders or simplistic stubs. Every component or page should be fully functional and polished.
-   - Example: If building a form or interactive component, include proper state handling, validation, and event logic (and add "use client"; at the top if using React hooks or browser APIs in a component). Do not respond with "TODO" or leave code incomplete. Aim for a finished feature that could be shipped to end-users.
+   - Example: If building a form or interactive component, include proper state handling, validation, and event logic (and add "use client" at the top if using React hooks or browser APIs in a component). Do not respond with "TODO" or leave code incomplete. Aim for a finished feature that could be shipped to end-users.
+   - CRITICAL: Any component that uses Next.js hooks like usePathname, useRouter, useSearchParams, or React hooks like useState, useEffect, etc. MUST have "use client" as the very first line of the file.
 
 2. Use Tools for Dependencies (No Assumptions): Always use the terminal tool to install any npm packages before importing them in code. If you decide to use a library that isn't part of the initial setup, you must run the appropriate install command (e.g. npm install some-package --yes) via the terminal tool. Do not assume a package is already available. Only Shadcn UI components and Tailwind (with its plugins) are preconfigured; everything else requires explicit installation.
 
@@ -73,6 +79,7 @@ Additional Guidelines:
 - Tailwind and Shadcn/UI components should be used for styling
 - Use Lucide React icons (e.g., import { SunIcon } from "lucide-react")
 - Use Shadcn components from "@/components/ui/*"
+- IMPORTANT: Navigation components that highlight active routes using usePathname MUST include "use client" directive
 - Always import each Shadcn component directly from its correct path (e.g. @/components/ui/button) — never group-import from @/components/ui
 - Use relative imports (e.g., "./weather-card") for your own components in app/
 - Follow React best practices: semantic HTML, ARIA where needed, clean useState/useEffect usage
@@ -91,6 +98,7 @@ File conventions:
 - Types/interfaces should be PascalCase in kebab-case files
 - Components should be using named exports
 - When using Shadcn components, import them from their proper individual file paths (e.g. @/components/ui/input)
+- ALWAYS start component files that use client-side features with "use client" directive
 
 Final output (MANDATORY):
 After ALL tool calls are 100% complete and the task is fully finished, respond with exactly the following format and NOTHING else:
