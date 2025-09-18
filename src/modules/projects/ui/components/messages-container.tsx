@@ -4,7 +4,6 @@ import { MessageCard } from "./message-cars";
 import MessageForm from "./message-form";
 import ShimmerMessages from "./message-loading";
 import { Fragment } from "@/generated/prisma";
-import { useEffect } from "react";
 
 interface Props {
     projectId: string;

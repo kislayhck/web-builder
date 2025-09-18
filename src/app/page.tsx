@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTRPC } from "@/trpc/client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -31,7 +31,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-background via-background/90 to-background/80 text-foreground antialiased">
       <header className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-4">
-          <img src={"https://uxccelerate.ai/logo.png"} width={140} height={40} alt="Logo" />
+          <Image src={"https://uxccelerate.ai/logo.png"} width={140} height={40} alt="Logo" />
         </Link>
 
         <nav className="hidden md:flex gap-6 text-muted-foreground">
@@ -49,7 +49,7 @@ export default function Home() {
       <main className="max-w-6xl mx-auto px-6 py-10">
         <section className="text-center max-w-4xl mx-auto">
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-tight">
-            Let's make your dream a <span className="text-[var(--brand)]">reality.</span>
+            Let&apos;s make your dream a <span className="text-[var(--brand)]">reality.</span>
             <br />
             Right now.
           </h1>

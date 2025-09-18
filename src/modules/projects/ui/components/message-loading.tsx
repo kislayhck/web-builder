@@ -1,8 +1,7 @@
-import Image from "next/image";
-import {useState, useEffect} from "react";
+import {useState, useEffect, useMemo} from "react";
 
 const ShimmerMessages = () => {
-    const messages = [
+    const messages = useMemo(() => [
         "Thinking...",
         "Loading...",
         "Generating response...",
@@ -11,7 +10,7 @@ const ShimmerMessages = () => {
         "Optimizing...",
         "Adding final touches...",
         "Almost done...",
-    ]
+    ], []);
 
     const [currentMessage, setCurrentMessage] = useState(messages[0]);
 
